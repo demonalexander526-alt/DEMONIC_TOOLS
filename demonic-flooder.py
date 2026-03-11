@@ -16,7 +16,7 @@ def show_banner():
     print(" |_| \_| |______/_/ \_\___/  |_____|______\_____|_|  |_|")
     print(f"{G}======================================================={W}")
     print(f"{Y}  CREATED BY:  {W}NEXO TECH")
-    print(f"{Y}  INSPIRED BY: {W}DEMON ALEX && BLUEY && RESONEX")
+    print(f"{Y}  INSPIRED BY: {W}DEMON ALEX && BLUEY")
     print(f"{G}======================================================={W}\n")
 
 def start_flood():
